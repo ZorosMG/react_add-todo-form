@@ -9,7 +9,9 @@ type Todo = {
   completed: boolean;
   userId: number;
   user?: {
+    id: number;
     name: string;
+    username: string;
     email: string;
   };
 };
@@ -52,8 +54,8 @@ export const App = () => {
     setErrors({ title: '', user: '' });
   };
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value;
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = event.target.value;
 
     setTitle(newTitle.replace(/[^a-zA-Z0-9а-яА-ЯїЇєЄґҐіїІёЁ ]/g, ''));
   };

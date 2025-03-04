@@ -28,13 +28,19 @@ export const App = () => {
   const [errors, setErrors] = useState<Errors>({ title: '', user: '' });
 
   const addTodo = () => {
+    // Перевірка на наявність помилок
+    let hasError = false;
+
     if (!title || !userId) {
       if (!title) {
         setErrors(prev => ({ ...prev, title: 'Please enter a title' }));
+        hasError = true;
       }
 
       if (!userId) {
         setErrors(prev => ({ ...prev, user: 'Please choose a user' }));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        hasError = true;
       }
 
       return;
@@ -51,13 +57,29 @@ export const App = () => {
     setTodos(prevTodos => [...prevTodos, newTodo]);
     setTitle('');
     setUserId(0);
-    setErrors({ title: '', user: '' });
+    setErrors({ title: '', user: '' }); // Скидаємо помилки після додавання
   };
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = event.target.value;
 
     setTitle(newTitle.replace(/[^a-zA-Z0-9а-яА-ЯїЇєЄґҐіїІёЁ ]/g, ''));
+
+    // Очищаємо помилку при зміні значення
+    if (newTitle) {
+      setErrors(prev => ({ ...prev, title: '' }));
+    }
+  };
+
+  const handleUserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedUserId = Number(event.target.value);
+
+    setUserId(selectedUserId);
+
+    // Очищаємо помилку при виборі користувача
+    if (selectedUserId !== 0) {
+      setErrors(prev => ({ ...prev, user: '' }));
+    }
   };
 
   return (
@@ -87,9 +109,11 @@ export const App = () => {
           <select
             data-cy="userSelect"
             value={userId}
-            onChange={e => setUserId(Number(e.target.value))}
+            onChange={handleUserChange}
           >
-            <option value="">Choose a user</option>
+            <option value={0} disabled={!!userId}>
+              Choose a user
+            </option>
             {users.map(user => (
               <option key={user.id} value={user.id}>
                 {user.name}
